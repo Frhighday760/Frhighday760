@@ -186,50 +186,6 @@ jobs:
         android.enableJetifier=true
         EOF
         
-        # Create gradle wrapper files
-        mkdir -p android/gradle/wrapper
-        
-        # Create gradlew script
-        cat > android/gradlew << 'EOF'
-        #!/usr/bin/env sh
-        
-        APP_NAME="Gradle"
-        APP_BASE_NAME=`basename "$0"`
-        
-        # Use the maximum available, or set MAX_FD != -1 to use that value.
-        MAX_FD="maximum"
-        
-        warn () {
-            echo "$*"
-        }
-        
-        die () {
-            echo
-            echo "$*"
-            echo
-            exit 1
-        }
-        
-        case "`uname`" in
-          CYGWIN* )
-            cygwin=true
-            ;;
-          Darwin* )
-            darwin=true
-            ;;
-          MINGW* )
-            msys=true
-            ;;
-        esac
-        
-        CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-        
-        exec "$JAVACMD" "$@"
-        EOF
-        
-        # Make gradlew executable
-        chmod +x android/gradlew
-        
         # Create missing resource files
         mkdir -p android/app/src/main/res/mipmap-hdpi
         mkdir -p android/app/src/main/res/values
@@ -265,24 +221,19 @@ jobs:
         echo "=== Complete Android project created successfully ==="
         find android -name "*.gradle" -o -name "*.xml" -o -name "*.java" | head -20
 
-    - name: Setup Gradle Wrapper
-      working-directory: ./android
+    - name: Install Gradle
       run: |
-        # Use gradle wrapper from system
-        gradle wrapper --gradle-version 8.0 || echo "Using system gradle"
+        # Install Gradle
+        wget https://services.gradle.org/distributions/gradle-8.0-bin.zip
+        unzip -q gradle-8.0-bin.zip
+        export PATH=$PATH:$PWD/gradle-8.0/bin
+        echo "$PWD/gradle-8.0/bin" >> $GITHUB_PATH
 
-    - name: Build Debug APK (First attempt)
+    - name: Build Android APK
       working-directory: ./android
       run: |
-        echo "=== Starting Android Build ==="
-        ./gradlew assembleDebug --no-daemon --stacktrace
-      continue-on-error: true
-
-    - name: Build Release APK
-      working-directory: ./android
-      run: |
-        echo "=== Building Release APK ==="
-        ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
+        echo "=== Starting Android Build with System Gradle ==="
+        gradle assembleDebug --no-daemon --stacktrace
 
     - name: Find and Copy APK
       working-directory: ./android
@@ -291,12 +242,12 @@ jobs:
         find . -name "*.apk" -type f
         
         # Copy the APK to a standard location
-        if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-          cp app/build/outputs/apk/release/app-release-unsigned.apk frhighday-mobile.apk
-          echo "Release APK found and copied"
-        elif [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-          cp app/build/outputs/apk/debug/app-debug.apk frhighday-mobile.apk  
+        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          cp app/build/outputs/apk/debug/app-debug.apk frhighday-mobile.apk
           echo "Debug APK found and copied"
+        elif [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+          cp app/build/outputs/apk/release/app-release-unsigned.apk frhighday-mobile.apk  
+          echo "Release APK found and copied"
         else
           echo "No APK found, creating placeholder"
           echo "Frhighday Mobile App - Build Error" > frhighday-mobile.apk
