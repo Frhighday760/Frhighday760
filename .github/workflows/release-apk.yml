@@ -27,26 +27,20 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-
     - name: Create Android Project Structure
       run: |
-        echo "=== Creating Android Project Structure ==="
+        echo "=== Creating Complete Android Project ==="
         
-        # Create main android directory structure
+        # Create directory structure
         mkdir -p android/app/src/main/java/com/frhighday/app
         mkdir -p android/app/src/main/res/values
         mkdir -p android/app/src/main/res/layout
-        mkdir -p android/app/src/main/assets
-        mkdir -p android/capacitor-cordova-android-plugins/src/main/java
+        mkdir -p android/app/src/main/res/mipmap-anydpi-v26
+        mkdir -p android/app/src/main/res/mipmap-hdpi
+        mkdir -p android/app/src/main/res/mipmap-mdpi
+        mkdir -p android/app/src/main/res/mipmap-xhdpi
+        mkdir -p android/app/src/main/res/mipmap-xxhdpi
+        mkdir -p android/app/src/main/res/mipmap-xxxhdpi
         
         # Create main build.gradle
         cat > android/build.gradle << 'EOF'
@@ -65,10 +59,6 @@ jobs:
                 google()
                 mavenCentral()
             }
-        }
-        
-        task clean(type: Delete) {
-            delete rootProject.buildDir
         }
         EOF
         
@@ -115,7 +105,7 @@ jobs:
         }
         EOF
         
-        # Create activity_main.xml
+        # Create layout
         cat > android/app/src/main/res/layout/activity_main.xml << 'EOF'
         <?xml version="1.0" encoding="utf-8"?>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -148,11 +138,10 @@ jobs:
         </resources>
         EOF
         
-        # Create AndroidManifest.xml
+        # Create AndroidManifest.xml (simplified)
         cat > android/app/src/main/AndroidManifest.xml << 'EOF'
         <?xml version="1.0" encoding="utf-8"?>
-        <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-            package="com.frhighday.app">
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             
             <uses-permission android:name="android.permission.INTERNET" />
             
@@ -160,7 +149,7 @@ jobs:
                 android:allowBackup="true"
                 android:icon="@mipmap/ic_launcher"
                 android:label="@string/app_name"
-                android:theme="@style/AppTheme">
+                android:theme="@android:style/Theme.Material.Light">
                 
                 <activity android:name=".MainActivity"
                     android:exported="true">
@@ -174,43 +163,14 @@ jobs:
         </manifest>
         EOF
         
-        # Create settings.gradle
-        cat > android/settings.gradle << 'EOF'
-        include ':app'
-        EOF
+        # Create proper PNG icon files for all densities
+        echo -n -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+        echo -n -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+        echo -n -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+        echo -n -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+        echo -n -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0bIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
         
-        # Create gradle.properties
-        cat > android/gradle.properties << 'EOF'
-        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-        android.useAndroidX=true
-        android.enableJetifier=true
-        EOF
-        
-        # Create missing resource files
-        mkdir -p android/app/src/main/res/mipmap-hdpi
-        mkdir -p android/app/src/main/res/values
-        
-        # Create app icon (placeholder)
-        cat > android/app/src/main/res/mipmap-hdpi/ic_launcher.xml << 'EOF'
-        <?xml version="1.0" encoding="utf-8"?>
-        <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-            <background android:drawable="@color/ic_launcher_background"/>
-            <foreground android:drawable="@color/ic_launcher_foreground"/>
-        </adaptive-icon>
-        EOF
-        
-        # Create app theme
-        cat > android/app/src/main/res/values/styles.xml << 'EOF'
-        <resources>
-            <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-                <item name="colorPrimary">#4CAF50</item>
-                <item name="colorPrimaryDark">#388E3C</item>
-                <item name="colorAccent">#FF9800</item>
-            </style>
-        </resources>
-        EOF
-        
-        # Create colors
+        # Create colors and adaptive icon
         cat > android/app/src/main/res/values/colors.xml << 'EOF'
         <resources>
             <color name="ic_launcher_background">#4CAF50</color>
@@ -218,39 +178,51 @@ jobs:
         </resources>
         EOF
         
-        echo "=== Complete Android project created successfully ==="
-        find android -name "*.gradle" -o -name "*.xml" -o -name "*.java" | head -20
+        cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml << 'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@color/ic_launcher_background"/>
+            <foreground android:drawable="@color/ic_launcher_foreground"/>
+        </adaptive-icon>
+        EOF
+        
+        # Create gradle files
+        cat > android/settings.gradle << 'EOF'
+        include ':app'
+        EOF
+        
+        cat > android/gradle.properties << 'EOF'
+        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+        android.useAndroidX=true
+        android.enableJetifier=true
+        EOF
+        
+        echo "=== Android project created successfully ==="
 
     - name: Install Gradle
       run: |
-        # Install Gradle
         wget https://services.gradle.org/distributions/gradle-8.0-bin.zip
         unzip -q gradle-8.0-bin.zip
-        export PATH=$PATH:$PWD/gradle-8.0/bin
         echo "$PWD/gradle-8.0/bin" >> $GITHUB_PATH
 
     - name: Build Android APK
       working-directory: ./android
       run: |
-        echo "=== Starting Android Build with System Gradle ==="
+        echo "=== Building Android APK ==="
         gradle assembleDebug --no-daemon --stacktrace
 
     - name: Find and Copy APK
       working-directory: ./android
       run: |
-        echo "=== Locating APK files ==="
+        echo "=== Locating APK ==="
         find . -name "*.apk" -type f
         
-        # Copy the APK to a standard location
         if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
           cp app/build/outputs/apk/debug/app-debug.apk frhighday-mobile.apk
-          echo "Debug APK found and copied"
-        elif [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
-          cp app/build/outputs/apk/release/app-release-unsigned.apk frhighday-mobile.apk  
-          echo "Release APK found and copied"
+          echo "✅ APK successfully built and copied!"
         else
-          echo "No APK found, creating placeholder"
-          echo "Frhighday Mobile App - Build Error" > frhighday-mobile.apk
+          echo "❌ APK not found"
+          exit 1
         fi
         
         ls -la frhighday-mobile.apk
