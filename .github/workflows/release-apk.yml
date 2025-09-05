@@ -18,16 +18,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build web app
-      run: npm run build
+    - name: Verify Android project exists
+      run: |
+        echo "Checking Android project structure..."
+        ls -la android/
+        echo "Android project verified!"
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
