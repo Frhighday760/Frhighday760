@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix White Screen - Frhighday</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+        }
+        h1 {
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        .big-button {
+            background: #10b981;
+            color: #1a1a1a;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .message {
+            margin: 20px 0;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix White Screen</h1>
+        <p class="message">If you're seeing a white screen or the app won't load, click the button below to fix it.</p>
+        <button class="big-button" onclick="window.location.href='/emergency-recovery.html?white-screen=true'">
+            Fix App Now
+        </button>
+        <p class="message">This will clear problematic data and get you back into the app safely.</p>
+    </div>
+</body>
+</html>
