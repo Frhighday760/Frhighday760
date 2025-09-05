@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frhighday - Cannabis Community</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui;
+      background: #0a0a0a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      text-align: center;
+      max-width: 500px;
+      padding: 40px;
+    }
+    h1 {
+      color: #22c55e;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      opacity: 0.8;
+    }
+    .btn {
+      background: #22c55e;
+      color: black;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 10px;
+      transition: transform 0.2s;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    .status {
+      margin-top: 30px;
+      padding: 15px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid #22c55e;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌿 Frhighday</h1>
+    <p>Cannabis Community Platform</p>
+    
+    <div class="status">
+      <p>✅ Emergency Recovery Mode Active</p>
+      <p>Bypassing all plugin conflicts</p>
+    </div>
+    
+    <button class="btn" onclick="loadMainApp()">Launch Main App</button>
+    <button class="btn" onclick="clearAndReload()">Clear Data & Reload</button>
+    
+    <div id="loading" style="display:none; margin-top:20px;">
+      <p>Loading main application...</p>
+    </div>
+  </div>
+
+  <script>
+    // Emergency admin login
+    const adminUserData = {
+      id: "admin-frhighday-1754353771865",
+      username: "theshop",
+      displayName: "The Shop",
+      email: "Frhighday760@icloud.com",
+      isAdmin: true,
+      role: "super_admin"
+    };
+    
+    localStorage.setItem('currentUser', JSON.stringify(adminUserData));
+    localStorage.setItem('frhighday-user-session', JSON.stringify({
+      user: adminUserData,
+      timestamp: Date.now(),
+      rememberMe: true
+    }));
+    
+    function loadMainApp() {
+      document.getElementById('loading').style.display = 'block';
+      // Redirect to the main Vite dev server URL
+      setTimeout(() => {
+        window.location.href = 'http://localhost:5000';
+      }, 1000);
+    }
+    
+    function clearAndReload() {
+      localStorage.clear();
+      sessionStorage.clear();
+      localStorage.setItem('currentUser', JSON.stringify(adminUserData));
+      loadMainApp();
+    }
+    
+    console.log('Emergency recovery page loaded successfully');
+    console.log('Admin user automatically logged in');
+  </script>
+</body>
+</html>

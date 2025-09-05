@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frhighday - Emergency Recovery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a1a;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #10b981;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        
+        p {
+            color: #d1d5db;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .primary-btn {
+            background: #10b981;
+            color: #1a1a1a;
+        }
+        
+        .primary-btn:hover {
+            background: #059669;
+        }
+        
+        .secondary-btn {
+            background: transparent;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+        
+        .secondary-btn:hover {
+            background: #374151;
+            border-color: #6b7280;
+        }
+        
+        .info {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        
+        .info h3 {
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+        
+        .info ul {
+            color: #d1d5db;
+            padding-left: 20px;
+        }
+        
+        .info li {
+            margin-bottom: 4px;
+        }
+        
+        .footer {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 32px;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #064e3b;
+            border: 1px solid #10b981;
+            color: #6ee7b7;
+        }
+        
+        .status.error {
+            background: #7f1d1d;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🌿</div>
+        <h1>App Recovery Center</h1>
+        <p>If you're seeing a white screen or the app isn't loading properly, try these recovery options below.</p>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="button-group">
+            <button class="primary-btn" onclick="performEmergencyRecovery()">
+                🔧 Quick Fix (Recommended)
+            </button>
+            
+            <button class="secondary-btn" onclick="clearBrowserData()">
+                🗑️ Clear Browser Data
+            </button>
+            
+            <button class="secondary-btn" onclick="reloadApp()">
+                ↻ Reload App
+            </button>
+            
+            <button class="secondary-btn" onclick="goToHome()">
+                🏠 Go to Home
+            </button>
+        </div>
+        
+        <div class="info">
+            <h3>What this does:</h3>
+            <ul>
+                <li>Clears temporary data that might be causing issues</li>
+                <li>Resets the app to a fresh state</li>
+                <li>Keeps your login and preferences safe</li>
+                <li>Works for most white screen and loading problems</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>If problems persist, try opening the app in an incognito/private window.</p>
+            <p>For ongoing issues, please report them to support.</p>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        async function performEmergencyRecovery() {
+            showStatus('Performing emergency recovery...', 'success');
+            
+            try {
+                // Clear problematic localStorage data
+                const keysToPreserve = [
+                    'frhighday_age_verified',
+                    'frhighday_verification_date',
+                    'frhighday_auth_token',
+                    'frhighday_user_preferences'
+                ];
+                
+                // Get all localStorage keys
+                const allKeys = Object.keys(localStorage);
+                
+                // Clear everything except preserved items
+                allKeys.forEach(key => {
+                    if (!keysToPreserve.includes(key) && key.startsWith('frhighday_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                // Clear sessionStorage completely
+                sessionStorage.clear();
+                
+                // Clear any blocking flags
+                localStorage.removeItem('frhighday-auth-blocking');
+                localStorage.removeItem('frhighday-login-failed');
+                localStorage.removeItem('frhighday-white-screen');
+                localStorage.removeItem('frhighday-initialization-error');
+                
+                // Try to contact server recovery endpoint
+                try {
+                    await fetch('/api/emergency/white-screen-recovery', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } catch (e) {
+                    console.log('Server recovery request failed, continuing with client recovery');
+                }
+                
+                showStatus('Recovery completed! Reloading app...', 'success');
+                
+                // Wait a moment then reload
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('Recovery failed. Try the manual options below.', 'error');
+            }
+        }
+        
+        function clearBrowserData() {
+            if (confirm('This will clear all browser data for this site. Are you sure?')) {
+                // Clear everything
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Clear cookies
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                showStatus('Browser data cleared! Reloading...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+            }
+        }
+        
+        function reloadApp() {
+            showStatus('Reloading app...', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+        
+        function goToHome() {
+            showStatus('Going to home page...', 'success');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }
+        
+        // Auto-trigger recovery if accessed with ?auto=true
+        if (window.location.search.includes('auto=true')) {
+            setTimeout(performEmergencyRecovery, 1000);
+        }
+        
+        // Immediate recovery for white screen users
+        // Check if this is likely a white screen scenario
+        const isWhiteScreenUser = document.referrer === '' || 
+                                 window.location.search.includes('white-screen') ||
+                                 localStorage.getItem('frhighday-white-screen-detected');
+        
+        if (isWhiteScreenUser) {
+            showStatus('White screen detected - preparing recovery...', 'success');
+            setTimeout(performEmergencyRecovery, 2000);
+        }
+    </script>
+</body>
+</html>

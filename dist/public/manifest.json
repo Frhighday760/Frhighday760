@@ -1,0 +1,80 @@
+{
+  "name": "Frhighday - Cannabis Community",
+  "short_name": "Frhighday",
+  "description": "Cannabis community platform for sharing posts, strain reviews, and connecting with fellow enthusiasts",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#4ade80",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/frhighday-logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/frhighday-logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/frhighday-logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/frhighday-logo-icon.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["social", "entertainment", "lifestyle"],
+  "lang": "en-US",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Home Feed",
+      "short_name": "Home",
+      "description": "View your personalized cannabis community feed",
+      "url": "/?shortcut=home",
+      "icons": [
+        {
+          "src": "/frhighday-logo-icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "short_name": "Alerts",
+      "description": "Check your latest notifications",
+      "url": "/?shortcut=notifications",
+      "icons": [
+        {
+          "src": "/frhighday-logo-icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+frhighday",
+      "url": "/?action=%s"
+    }
+  ]
+}
