@@ -1,0 +1,9 @@
+// This file is used to include capacitor plugins
+// You can add additional include statements here for any Capacitor plugins
+
+// Core Capacitor modules would be included here
+// For example:
+// include ':capacitor-app'
+// include ':capacitor-haptics'
+// include ':capacitor-keyboard'
+// include ':capacitor-status-bar'
